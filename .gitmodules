@@ -1,0 +1,3 @@
+[submodule "appmetrics-web"]
+	path = appmetrics-web
+	url = https://github.com/tobespc/appmetrics-web
