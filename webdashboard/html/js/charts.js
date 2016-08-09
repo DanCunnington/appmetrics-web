@@ -141,14 +141,15 @@ function initialiseSocketIO() {
 
     if(Expressdata.getNumberOfRows() > 0){
       var oldDate = Expressdata.getValue(0,0).getTime() / 1000; // convert to seconds
-      if(((express['timestamp'] / 1000) - oldDate) > 120){
+      if(((express['time'] / 1000) - oldDate) > 120){
         Expressdata.removeRow(0);            
       }
     }
     Expressdata.addRow([new Date(express['time']),(express.duration), 
                         'Request: ' +(express.method)+'\n'+
                         'URL: '+(express.url)+'\n'+
-                        'Response: ' +(express.statusCode)]);
+                        'Response: ' +(express.statusCode)+'\n'+
+                        'Duration: '+(express.duration)]);
     Expresschart.draw(Expressdata, Expressoptions);
   });
 
