@@ -1,7 +1,7 @@
     html {
         background-color: #3b4b54;
     }
-	
+    
     .container {
         width: 100%;
     }
@@ -24,14 +24,19 @@
         background-color: #3b4b54;
     }
 
-	
+    #expressUrlGraph {
+        width: 900px;
+        height: 200px;
+        background-color: #3b4b54;
+    }
+    
     #gcGraph {
         width: 900px;
         height: 200px;
         background-color: #3b4b54;
     }
 
-	
+    
     #httpGraph {
         width: 900px;
         height: 200px;
