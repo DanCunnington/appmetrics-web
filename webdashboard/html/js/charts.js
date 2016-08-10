@@ -1,3 +1,80 @@
+var ExpressUrlchart;
+var ExpressUrloptions
+var ExpressUrldata;
+var mostPopularMethodCalls = [];
+function drawExpressUrlChart() {
+
+  ExpressUrldata = new google.visualization.DataTable();
+  ExpressUrldata.addColumn('string', 'method');
+  ExpressUrldata.addColumn('number', 'frequency');
+  ExpressUrldata.addColumn({type: 'string', role: 'tooltip'});
+
+  ExpressUrloptions = {
+    title: 'Most Frequently Called Express Routes',
+    backgroundColor: '#3b4b54',
+    legendTextStyle: { color: '#FFF' },
+    titleTextStyle: { color: '#FFF' },
+    hAxis: {
+      textStyle:{color: '#FFF'}
+    },
+    vAxis: {
+      textStyle:{color: '#FFF'}
+    },
+    legend: { position: 'bottom'}
+  };
+
+  ExpressUrlchart = new google.visualization.ColumnChart(document.getElementById('expressUrlGraph'));
+  ExpressUrlchart.draw(ExpressUrldata, ExpressUrloptions);
+}
+function updateUrlData(newExpressData) {
+  
+  var url = newExpressData.url;
+  var method = newExpressData.method;
+
+  //Find url in our popularMethodCalls array
+  var exists = false;
+  var newCount = 1;
+  for (var i=0; i<mostPopularMethodCalls.length; i++) {
+    var existing = mostPopularMethodCalls[i];
+    if (existing.url === url) {
+      exists = true;
+      //Update count
+      existing.count ++;
+      newCount = existing.count;
+      break;
+    }
+  }
+  if (!exists) {
+    mostPopularMethodCalls.push({method: method, url: url, count: newCount});
+  }
+
+  //If we have more than 5
+  if (mostPopularMethodCalls.length > 5) {
+    //Find lowest element
+    var lowestIndex = 0;
+    var lowestCount = mostPopularMethodCalls[lowestIndex].count;
+    for (var i=1; i<mostPopularMethodCalls.length; i++) {
+      if (mostPopularMethodCalls[i].count < lowestCount) {
+        lowestCount = mostPopularMethodCalls[i].count;
+        lowestIndex = i;
+      }
+    }
+
+    //Remove it
+    mostPopularMethodCalls.splice(lowestIndex,1);
+  }
+
+  //update the ExpressUrldata
+  ExpressUrldata.removeRows(0,ExpressUrldata.getNumberOfRows());
+  for (var i=0; i<mostPopularMethodCalls.length; i++) {
+    var thisObj = mostPopularMethodCalls[i];
+    ExpressUrldata.addRow([thisObj.url,thisObj.count,'Request: ' +(thisObj.method)+'\n URL: '+(thisObj.url)]);
+  }
+
+  
+  ExpressUrlchart.draw(ExpressUrldata, ExpressUrloptions);
+}
+
 var Expressdata;
 var Expressoptions;
 var Expresschart;
@@ -150,6 +227,7 @@ function initialiseSocketIO() {
                         'URL: '+(express.url)+'\n'+
                         'Response: ' +(express.statusCode)+'\n'+
                         'Duration: '+(express.duration)]);
+    updateUrlData(express);
     Expresschart.draw(Expressdata, Expressoptions);
   });
 
@@ -174,3 +252,4 @@ google.charts.setOnLoadCallback(drawChart);
 google.charts.setOnLoadCallback(drawMemoryChart);
 google.charts.setOnLoadCallback(drawGCChart);
 google.charts.setOnLoadCallback(drawExpressChart);
+google.charts.setOnLoadCallback(drawExpressUrlChart);
